@@ -1,0 +1,68 @@
+tasks:
+  web_scraping_task:
+    description: >
+      Scrape des données pertinentes à partir d’un ensemble de sites définis en lien avec un sujet donné.
+      L’objectif est d’extraire des informations à jour, utiles et bien ciblées.
+    expected_output: >
+      Une liste structurée de contenus pertinents ou d’articles extraits du web.
+    agent: ScraperAgent
+    guardrails:
+      - N’extraire que les contenus contenant les mots-clés spécifiés.
+      - Éviter toute redondance ou contenu non pertinent.
+
+  complementary_search_task:
+    description: >
+      Utiliser un moteur de recherche pour trouver d’autres sources d’information sur le sujet étudié.
+      Résumer les informations clés de manière concise et claire.
+    expected_output: >
+      Un résumé ou une liste de liens issus de sources fiables et récentes.
+    agent: SearchAgent
+    guardrails:
+      - Filtrer uniquement les résultats provenant de domaines reconnus (ex: .org, .edu, .gov).
+      - Exclure les résultats sponsorisés ou publicitaires.
+
+  pdf_analysis_task:
+    description: >
+      Interroger un document PDF fourni pour répondre à des questions spécifiques sur le sujet.
+      Utiliser une approche RAG pour s’assurer que les réponses proviennent exclusivement du document.
+    expected_output: >
+      Une série de réponses concises, avec référence aux passages du PDF si possible.
+    agent: RAGAgent
+    guardrail:
+      - Ne jamais extrapoler des réponses qui ne sont pas explicitement dans le PDF.
+      - Répondre « Information non trouvée » si l'information n’est pas présente.
+
+  data_validation_task:
+    description: >
+      Vérifier la cohérence, la pertinence et la fiabilité des données obtenues par les autres agents.
+      Identifier les doublons ou les faiblesses dans les arguments.
+    expected_output: >
+      Une évaluation critique sous forme de commentaires avec un score de fiabilité.
+    agent: CriticAgent
+    guardrail:
+      - Justifier chaque critique par une phrase argumentée.
+      - Attribuer un score de 0 à 5 pour chaque donnée analysée.
+
+  report_generation_task:
+    description: >
+      Compiler les données validées dans un rapport structuré en sections :
+      Introduction, Données, Analyse, Conclusion.
+      Le rapport doit être rédigé dans un style clair et professionnel.
+    expected_output: >
+      Un rapport complet au format Markdown, prêt à être utilisé comme livrable final.
+    agent: ReportAgent
+    output_file: insightmesh_report.md
+    guardrail:
+      - Utiliser un style formel, clair et sans redondance.
+      - Respecter strictement la structure en 4 sections.
+
+  coordination_task:
+    description: >
+      Orchestrer toutes les tâches de manière fluide en s’assurant que les tâches parallèles soient bien synchronisées
+      et que l’ordre logique soit respecté entre extraction, validation et génération.
+    expected_output: >
+      Une exécution sans erreur des agents, avec gestion fluide des dépendances.
+    agent: CoordinatorAgent
+    guardrail:
+      - Ne passer à l’étape suivante que si les précédentes ont réussi.
+      - Réexécuter une tâche échouée une fois avant abandon.
